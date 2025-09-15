@@ -48,7 +48,6 @@ class BaseFlutterWindow: NSObject {
   }
 
   func close() {
-    debugPrint("BaseFlutterWindow.close")
     window.close()
   }
 
@@ -123,22 +122,10 @@ class FlutterWindow: BaseFlutterWindow {
 
 extension FlutterWindow: NSWindowDelegate {
   func windowWillClose(_ notification: Notification) {
-    // Notify Dart that this window is closing
-    debugPrint("FlutterWindow.windowWillClose")
-    if MultiWindowManager.shared == nil {
-      debugPrint("MultiWindowManager.shared is nil")
-      return
-    }
-    FlutterMultiWindowPlugin.shared?.sendEvent([
-      "event": "close",
-      "windowId": windowId,
-      "payload": [:]
-    ])
     delegate?.onClose(windowId: windowId)
   }
 
   func windowShouldClose(_ sender: NSWindow) -> Bool {
-    debugPrint("FlutterWindow.windowShouldClose")
     delegate?.onClose(windowId: windowId)
     return true
   }
