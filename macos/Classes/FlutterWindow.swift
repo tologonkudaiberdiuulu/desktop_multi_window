@@ -8,7 +8,7 @@ import Cocoa
 import FlutterMacOS
 import Foundation
 
-class BaseFlutterWindow: NSObject {
+class BaseFlutterWindow: NSObject, NSWindowDelegate {
   private let window: NSWindow
   let windowChannel: WindowChannel
 
@@ -122,6 +122,12 @@ class FlutterWindow: BaseFlutterWindow {
 
 extension FlutterWindow: NSWindowDelegate {
   func windowWillClose(_ notification: Notification) {
+    // Notify Dart that this window is closing
+    FlutterMultiWindowPlugin.shared?.sendEvent([
+      "event": "close",
+      "windowId": windowId,
+      "payload": [:]
+    ])
     delegate?.onClose(windowId: windowId)
   }
 
