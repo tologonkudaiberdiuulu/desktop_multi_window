@@ -8,7 +8,7 @@ import Cocoa
 import FlutterMacOS
 import Foundation
 
-class BaseFlutterWindow: NSObject, NSWindowDelegate {
+class BaseFlutterWindow: NSObject {
   private let window: NSWindow
   let windowChannel: WindowChannel
 
