@@ -6,13 +6,16 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin, FlutterStreamHan
   static func registerInternal(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "mixin.one/flutter_multi_window", binaryMessenger: registrar.messenger)
     let instance = FlutterMultiWindowPlugin()
+    debugPrint("FlutterMultiWindowPlugin registerInternal Start")
     let events = FlutterEventChannel(name: "desktop_multi_window/events",
                                      binaryMessenger: registrar.messenger)
     events.setStreamHandler(instance)
+    debugPrint("FlutterMultiWindowPlugin registerInternal End")
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
+    debugPrint("FlutterMultiWindowPlugin register")
     registerInternal(with: registrar)
     guard let app = NSApplication.shared.delegate as? FlutterAppDelegate else {
       debugPrint("failed to find flutter main window, application delegate is not FlutterAppDelegate")
@@ -45,8 +48,10 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin, FlutterStreamHan
   // Expose a shared reference or pass `instance` to windows as needed
   static var shared: FlutterMultiWindowPlugin?
   override init() {
+    debugPrint("FlutterMultiWindowPlugin init start")
     super.init()
     FlutterMultiWindowPlugin.shared = self
+    debugPrint("FlutterMultiWindowPlugin init end")
   }
 
   public typealias OnWindowCreatedCallback = (FlutterViewController) -> Void

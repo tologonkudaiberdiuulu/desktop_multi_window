@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 
@@ -28,6 +29,7 @@ class WindowEvent {
   WindowEvent(this.windowId, this.type, [this.payload = const {}]);
 
   factory WindowEvent.fromMap(Map<dynamic, dynamic> map) {
+    debugPrint('WindowEvent.fromMap: $map');
     final type = switch (map['event'] as String) {
       'close' => WindowEventType.close,
       'focus' => WindowEventType.focus,
