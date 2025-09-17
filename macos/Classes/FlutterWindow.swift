@@ -19,40 +19,90 @@ class BaseFlutterWindow: NSObject {
   }
 
   func show() {
-    window.makeKeyAndOrderFront(nil)
-    NSApp.activate(ignoringOtherApps: true)
+    if Thread.isMainThread {
+      window.makeKeyAndOrderFront(nil)
+      NSApp.activate(ignoringOtherApps: true)
+    } else {
+      DispatchQueue.main.async {
+        self.window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+      }
+    }
   }
 
   func hide() {
-    window.orderOut(nil)
+    if Thread.isMainThread {
+      window.orderOut(nil)
+    } else {
+      DispatchQueue.main.async {
+        self.window.orderOut(nil)
+      }
+    }
   }
 
   func center() {
-    window.center()
+    if Thread.isMainThread {
+      window.center()
+    } else {
+      DispatchQueue.main.async {
+        self.window.center()
+      }
+    }
   }
 
   func setFrame(frame: NSRect) {
-    window.setFrame(frame, display: false, animate: true)
+    if Thread.isMainThread {
+      window.setFrame(frame, display: false, animate: true)
+    } else {
+      DispatchQueue.main.async {
+        self.window.setFrame(frame, display: false, animate: true)
+      }
+    }
   }
 
   func setTitle(title: String) {
-    window.title = title
+    if Thread.isMainThread {
+      window.title = title
+    } else {
+      DispatchQueue.main.async {
+        self.window.title = title
+      }
+    }
   }
 
   func resizable(resizable: Bool) {
-    if (resizable) {
-      window.styleMask.insert(.resizable)
+    let apply: () -> Void = {
+      if (resizable) {
+        self.window.styleMask.insert(.resizable)
+      } else {
+        self.window.styleMask.remove(.resizable)
+      }
+    }
+    if Thread.isMainThread {
+      apply()
     } else {
-      window.styleMask.remove(.resizable)
+      DispatchQueue.main.async { apply() }
     }
   }
 
   func close() {
-    window.close()
+    if Thread.isMainThread {
+      window.close()
+    } else {
+      DispatchQueue.main.async {
+        self.window.close()
+      }
+    }
   }
 
   func setFrameAutosaveName(name: String) {
-    window.setFrameAutosaveName(name)
+    if Thread.isMainThread {
+      window.setFrameAutosaveName(name)
+    } else {
+      DispatchQueue.main.async {
+        self.window.setFrameAutosaveName(name)
+      }
+    }
   }
 }
 
