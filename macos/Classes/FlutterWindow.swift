@@ -172,11 +172,32 @@ class FlutterWindow: BaseFlutterWindow {
 
 extension FlutterWindow: NSWindowDelegate {
   func windowWillClose(_ notification: Notification) {
+    debugPrint("windowWillClose called for windowId: \(windowId)")
     delegate?.onClose(windowId: windowId)
   }
 
   func windowShouldClose(_ sender: NSWindow) -> Bool {
-    delegate?.onClose(windowId: windowId)
+    debugPrint("windowShouldClose called for windowId: \(windowId) isVisible=\(sender.isVisible)")
+
+    // Inform manager about close request on main thread and schedule a fallback
+    let performCloseNotify: () -> Void = {
+      self.delegate?.onClose(windowId: self.windowId)
+
+      // If the window remains visible after a short delay, force close it.
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+        if sender.isVisible {
+          debugPrint("window \(self.windowId) still visible after close request — forcing close")
+          sender.close()
+        }
+      }
+    }
+
+    if Thread.isMainThread {
+      performCloseNotify()
+    } else {
+      DispatchQueue.main.async { performCloseNotify() }
+    }
+
     return true
   }
 }
